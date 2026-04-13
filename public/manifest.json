@@ -1,0 +1,22 @@
+{
+  "name": "NIZO - Shopping App",
+  "short_name": "NIZO",
+  "description": "Discover the latest fashion trends at NIZO. Premium clothing for men and women.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F6F1EB",
+  "theme_color": "#F6F1EB",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
