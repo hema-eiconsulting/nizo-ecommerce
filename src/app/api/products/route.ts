@@ -3,6 +3,18 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+const ADMIN_URL = "https://admin-fvcis6d6a-hema-eiconsultings-projects.vercel.app";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": ADMIN_URL,
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { headers: corsHeaders });
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -29,10 +41,10 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(products);
+    return NextResponse.json(products, { headers: corsHeaders });
   } catch (error) {
     console.error("[PRODUCTS_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse("Internal error", { status: 500, headers: corsHeaders });
   }
 }
 
@@ -41,7 +53,7 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
 
     if (!session || (session.user as any)?.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401, headers: corsHeaders });
     }
 
     const body = await req.json();
@@ -57,7 +69,7 @@ export async function POST(req: Request) {
     } = body;
 
     if (!name || !price || !gender || !category || !sizes || sizes.length === 0) {
-      return new NextResponse("Missing required fields", { status: 400 });
+      return new NextResponse("Missing required fields", { status: 400, headers: corsHeaders });
     }
 
     const product = await prisma.product.create({
@@ -81,9 +93,9 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json(product, { headers: corsHeaders });
   } catch (error) {
     console.error("[PRODUCTS_POST]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse("Internal error", { status: 500, headers: corsHeaders });
   }
 }

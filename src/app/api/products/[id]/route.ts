@@ -3,6 +3,18 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+const ADMIN_URL = "https://admin-fvcis6d6a-hema-eiconsultings-projects.vercel.app";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": ADMIN_URL,
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { headers: corsHeaders });
+}
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -10,7 +22,7 @@ export async function GET(
   const { id } = await params;
   try {
     if (!id) {
-      return new NextResponse("Product ID is required", { status: 400 });
+      return new NextResponse("Product ID is required", { status: 400, headers: corsHeaders });
     }
 
     const product = await prisma.product.findUnique({
@@ -22,10 +34,10 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json(product, { headers: corsHeaders });
   } catch (error) {
     console.error("[PRODUCT_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse("Internal error", { status: 500, headers: corsHeaders });
   }
 }
 
@@ -97,10 +109,10 @@ export async function PATCH(
       }
     }
 
-    return NextResponse.json(product);
+    return NextResponse.json(product, { headers: corsHeaders });
   } catch (error) {
     console.error("[PRODUCT_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse("Internal error", { status: 500, headers: corsHeaders });
   }
 }
 
@@ -113,11 +125,11 @@ export async function DELETE(
     const session = await getServerSession(authOptions);
 
     if (!session || (session.user as any)?.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401, headers: corsHeaders });
     }
 
     if (!id) {
-      return new NextResponse("Product ID is required", { status: 400 });
+      return new NextResponse("Product ID is required", { status: 400, headers: corsHeaders });
     }
 
     const product = await prisma.product.delete({
@@ -126,9 +138,9 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json(product, { headers: corsHeaders });
   } catch (error) {
     console.error("[PRODUCT_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse("Internal error", { status: 500, headers: corsHeaders });
   }
 }

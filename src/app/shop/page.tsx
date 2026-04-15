@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ProductCard from "@/components/storefront/ProductCard";
 import { FiFilter, FiX } from "react-icons/fi";
 
-export default function ShopPage() {
+function ShopContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -136,5 +136,13 @@ export default function ShopPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: '5rem', textAlign: 'center', letterSpacing: '2px' }}>LOADING PRODUCTS...</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, Suspense } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ProductCard from "@/components/storefront/ProductCard";
 import { FiFilter, FiGrid, FiLayers, FiStar, FiMaximize, FiFeather, FiBriefcase, FiShield, FiWatch } from "react-icons/fi";
 
-export default function GenderShopPage({ params: paramsPromise }: { params: Promise<{ gender: string }> }) {
+function GenderShopContent({ paramsPromise }: { paramsPromise: Promise<{ gender: string }> }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = use(paramsPromise);
@@ -151,5 +151,13 @@ export default function GenderShopPage({ params: paramsPromise }: { params: Prom
         </div>
       </div>
     </>
+  );
+}
+
+export default function GenderShopPage({ params }: { params: Promise<{ gender: string }> }) {
+  return (
+    <Suspense fallback={<div style={{ padding: '5rem', textAlign: 'center', letterSpacing: '2px' }}>LOADING PRODUCTS...</div>}>
+      <GenderShopContent paramsPromise={params} />
+    </Suspense>
   );
 }
