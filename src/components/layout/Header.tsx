@@ -33,8 +33,8 @@ export default function Header() {
         </button>
 
         {/* Left Side: Branding */}
-        <Link href="/" className="logo">
-          NIZO
+        <Link href="/" className="logo" style={{ display: 'flex', alignItems: 'center' }}>
+          <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '32px', width: 'auto' }} />
         </Link>
 
         {/* Center: Navigation - Hidden when search is open on small screens, or just always there */}

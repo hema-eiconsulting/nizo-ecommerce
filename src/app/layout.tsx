@@ -10,8 +10,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "500", "600"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "NIZO | Premium Clothing For Men & Women",
-  description: "Discover the latest fashion trends at NIZO. Premium clothing for men and women.",
+  title: "NIZO | Clothing Store For Men & Women",
+  description: "Discover the latest fashion at NIZO. Quality clothing for men and women.",
 };
 
 export default function RootLayout({

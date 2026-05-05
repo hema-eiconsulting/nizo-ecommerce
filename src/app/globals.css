@@ -11,7 +11,7 @@
   /* UI Elements */
   --border: #e8e4e0;
   --muted: #7f8c8d;
-  --header-bg: rgba(246, 241, 235, 0.95);
+  --header-bg: #F6F1EB; /* Solid beige, removed transparency */
   --error: #af4448;
   --success: #6ab04c;
   --danger: #eb4d4b;
@@ -276,9 +276,24 @@ button {
 
 /* Filter Sidebar Styles */
 .filters-sidebar {
+  background-color: var(--background);
   border-right: 1px solid var(--border);
-  padding-right: 2rem;
+  padding: 1.5rem;
   animation: slideInLeft 0.3s ease;
+  z-index: 100;
+}
+
+@media (max-width: 1024px) {
+  .filters-sidebar {
+    position: fixed;
+    top: 90px;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    overflow-y: auto;
+  }
 }
 
 .filter-group {
@@ -317,27 +332,25 @@ button {
   height: 90px;
   display: flex;
   align-items: center;
-  background-color: var(--header-bg);
-  backdrop-filter: blur(10px);
+  background-color: #F6F1EB !important; /* Solid beige */
+  backdrop-filter: none !important; /* Remove blur to ensure solid color */
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-.mobile-menu-trigger {
-  display: none;
-  flex: 1;
-}
+
 
 .mobile-nav-drawer {
   position: fixed;
   inset: 0;
-  background-color: var(--background);
+  background-color: #F6F1EB !important; /* Explicit solid color */
   z-index: 2000;
   display: flex;
   flex-direction: column;
   animation: slideInLeft 0.3s ease;
+  opacity: 1 !important;
 }
 
 .mobile-nav-header {
@@ -379,6 +392,7 @@ button {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  gap: 1rem;
 }
 
 .logo {
@@ -387,7 +401,22 @@ button {
   font-weight: 800;
   letter-spacing: 5px;
   color: var(--foreground);
-  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mobile-menu-trigger {
+  display: flex !important;
+  background-color: #F6F1EB !important;
+  border: 1px solid var(--border) !important;
+  color: var(--foreground) !important;
+  width: 48px; /* Increased for better hit area */
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 .center-nav {
@@ -444,6 +473,8 @@ button {
   flex-direction: column;
   gap: 1rem;
   transition: transform 0.3s ease;
+  width: 100%;
+  max-width: 350px; /* Prevent it from getting too huge */
 }
 
 .product-image-container {

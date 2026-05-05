@@ -47,8 +47,10 @@ export default function RegisterPage() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>Create Account</h1>
-          <p>Join the Savana fashion community</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '48px', width: 'auto' }} />
+          </div>
+          <p>Sign up using your phone number</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}

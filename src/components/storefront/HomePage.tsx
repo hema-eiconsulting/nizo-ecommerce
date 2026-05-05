@@ -12,8 +12,8 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="hero">
           <div className="hero-content">
-            <h1>ELEVATE YOUR STYLE</h1>
-            <p>Curated collection for the modern individual.</p>
+            <h1>YOUR DAILY STYLE</h1>
+            <p>Quality clothing for your everyday needs.</p>
             <Link href="/shop" className="btn btn-primary" style={{ marginTop: '2rem', padding: '1rem 3rem' }}>EXPLORE COLLECTION</Link>
           </div>
         </section>
@@ -73,14 +73,16 @@ export default function HomePage() {
 
         <footer style={{ padding: '8rem 0 4rem', backgroundColor: 'var(--secondary)', textAlign: 'center' }}>
           <div className="container">
-            <div className="logo" style={{ marginBottom: '3rem', fontSize: '2.5rem' }}>NIZO</div>
+            <div className="logo" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'center' }}>
+              <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '64px', width: 'auto' }} />
+            </div>
             <div className="footer-links" style={{ display: 'flex', gap: '3rem', justifyContent: 'center', marginBottom: '4rem', fontSize: '0.75rem', letterSpacing: '2px' }}>
               <Link href="/about">ABOUT</Link>
               <Link href="/contact">CONTACT</Link>
               <Link href="/shipping">SHIPPING</Link>
               <Link href="/returns">RETURNS</Link>
             </div>
-            <p style={{ color: 'var(--muted)', fontSize: '0.65rem', letterSpacing: '1px' }}>© 2026 NIZO CLOTHING BRAND. CRAFTED FOR THE MODERN INDIVIDUAL.</p>
+            <p style={{ color: 'var(--muted)', fontSize: '0.65rem', letterSpacing: '1px' }}>© 2026 NIZO CLOTHING STORE. ALL RIGHTS RESERVED.</p>
           </div>
         </footer>
 

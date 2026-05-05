@@ -6,31 +6,56 @@ import bcrypt from "bcrypt";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: "OTP",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        phone: { label: "Phone", type: "text" },
+        otp: { label: "OTP", type: "text" },
+        name: { label: "Name", type: "text" },
+        isSignup: { label: "Is Signup", type: "text" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid credentials");
+        if (!credentials?.phone || !credentials?.otp) {
+          throw new Error("Phone and OTP are required");
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+        // 1. Retrieve stored OTP record
+        const otpRecord = await prisma.otpVerification.findUnique({
+          where: { phone: credentials.phone },
         });
 
-        if (!user || !user.password) {
-          throw new Error("Invalid credentials");
+        if (!otpRecord) {
+          throw new Error("OTP not found. Please request a new one.");
         }
 
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+        // 2. Check expiry
+        if (new Date() > otpRecord.expiresAt) {
+          await prisma.otpVerification.delete({ where: { phone: credentials.phone } });
+          throw new Error("OTP has expired. Please request a new one.");
+        }
 
-        if (!isCorrectPassword) {
-          throw new Error("Invalid credentials");
+        // 3. Verify OTP hash
+        const isValid = await bcrypt.compare(credentials.otp, otpRecord.otp);
+        if (!isValid) {
+          throw new Error("Invalid OTP. Please try again.");
+        }
+
+        // 4. Delete the used OTP
+        await prisma.otpVerification.delete({ where: { phone: credentials.phone } });
+
+        // 5. Find or create user
+        let user = await prisma.user.findUnique({
+          where: { phone: credentials.phone },
+        });
+
+        if (!user) {
+          // New user — create account with name if provided
+          user = await prisma.user.create({
+            data: {
+              phone: credentials.phone,
+              name: credentials.name || "Customer",
+              role: "CUSTOMER",
+            },
+          });
         }
 
         return {
@@ -39,8 +64,8 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
         };
-      }
-    })
+      },
+    }),
   ],
   pages: {
     signIn: "/login",
@@ -58,11 +83,11 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-         (session.user as any).role = token.role;
-         (session.user as any).id = token.id;
+        (session.user as any).role = token.role;
+        (session.user as any).id = token.id;
       }
       return session;
-    }
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

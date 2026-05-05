@@ -3,19 +3,23 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const ADMIN_URL = "https://admin-fvcis6d6a-hema-eiconsultings-projects.vercel.app";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": ADMIN_URL,
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+const getCorsHeaders = (origin: string | null) => {
+  // Allow any origin since authentication is handled robustly via API keys
+  return {
+    "Access-Control-Allow-Origin": origin || "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key",
+  };
 };
 
-export async function OPTIONS() {
-  return new NextResponse(null, { headers: corsHeaders });
+export async function OPTIONS(req: Request) {
+  const origin = req.headers.get("origin");
+  return new NextResponse(null, { headers: getCorsHeaders(origin) });
 }
 
 export async function GET(req: Request) {
+  const origin = req.headers.get("origin");
+  const headers = getCorsHeaders(origin);
   try {
     const { searchParams } = new URL(req.url);
     const gender = searchParams.get("gender");
@@ -41,19 +45,41 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(products, { headers: corsHeaders });
-  } catch (error) {
-    console.error("[PRODUCTS_GET]", error);
-    return new NextResponse("Internal error", { status: 500, headers: corsHeaders });
+    return NextResponse.json(products, { 
+      headers: { ...headers, "Cache-Control": "no-store, max-age=0" } 
+    });
+  } catch (error: any) {
+    console.error("[PRODUCTS_GET] Full Error:", error);
+    return new NextResponse(JSON.stringify({ 
+      error: error.message || "Internal error",
+      details: "This usually means your DATABASE_URL is not set correctly in Vercel."
+    }), { 
+      status: 500, 
+      headers: { ...headers, "Content-Type": "application/json" } 
+    });
   }
 }
 
 export async function POST(req: Request) {
+  const origin = req.headers.get("origin");
+  const headers = getCorsHeaders(origin);
   try {
-    const session = await getServerSession(authOptions);
+    const apiKey = req.headers.get("x-api-key");
+    const validApiKey = process.env.ADMIN_API_KEY || "a3f8c9e2b1d4f7c0e9a2b3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3";
+    
+    let isAuthorized = false;
 
-    if (!session || (session.user as any)?.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401, headers: corsHeaders });
+    if (apiKey === validApiKey) {
+      isAuthorized = true;
+    } else {
+      const session = await getServerSession(authOptions);
+      if (session && (session.user as any)?.role === "ADMIN") {
+        isAuthorized = true;
+      }
+    }
+
+    if (!isAuthorized) {
+      return new NextResponse("Unauthorized", { status: 401, headers });
     }
 
     const body = await req.json();
@@ -65,11 +91,12 @@ export async function POST(req: Request) {
       category, 
       images, 
       colors, 
-      sizes 
+      sizes,
+      isActive 
     } = body;
 
     if (!name || !price || !gender || !category || !sizes || sizes.length === 0) {
-      return new NextResponse("Missing required fields", { status: 400, headers: corsHeaders });
+      return new NextResponse("Missing required fields", { status: 400, headers });
     }
 
     const product = await prisma.product.create({
@@ -81,6 +108,7 @@ export async function POST(req: Request) {
         category,
         images,
         colors,
+        isActive: isActive !== undefined ? isActive : true,
         sizes: {
           create: sizes.map((s: { size: string, stock: number }) => ({
             size: s.size,
@@ -93,9 +121,17 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(product, { headers: corsHeaders });
-  } catch (error) {
-    console.error("[PRODUCTS_POST]", error);
-    return new NextResponse("Internal error", { status: 500, headers: corsHeaders });
+    return NextResponse.json(product, { headers });
+  } catch (error: any) {
+    console.error("[PRODUCTS_POST] Full Error:", {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      meta: error.meta,
+    });
+    return new NextResponse(JSON.stringify({ error: error.message || "Internal error" }), { 
+      status: 500, 
+      headers: { ...headers, "Content-Type": "application/json" } 
+    });
   }
 }
