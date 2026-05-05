@@ -71,18 +71,42 @@ export default function HomePage() {
             </div>
         </section>
 
-        <footer style={{ padding: '8rem 0 4rem', backgroundColor: 'var(--secondary)', textAlign: 'center' }}>
+        <footer className="site-footer">
           <div className="container">
-            <div className="logo" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'center' }}>
-              <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '64px', width: 'auto' }} />
+            <div className="footer-top">
+              <div className="footer-brand">
+                <div className="logo" style={{ marginBottom: '1.5rem' }}>
+                  <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '56px', width: 'auto' }} />
+                </div>
+                <p className="footer-tagline">Quality clothing for your everyday style — designed for men &amp; women who move with confidence.</p>
+                <a href="mailto:nizoecommerceapp@gmail.com" className="footer-email">
+                  ✉ nizoecommerceapp@gmail.com
+                </a>
+              </div>
+              <div className="footer-nav-group">
+                <h4 className="footer-nav-title">EXPLORE</h4>
+                <Link href="/shop">Shop All</Link>
+                <Link href="/shop/men">Men</Link>
+                <Link href="/shop/women">Women</Link>
+                <Link href="/new-arrivals">New Arrivals</Link>
+              </div>
+              <div className="footer-nav-group">
+                <h4 className="footer-nav-title">ACCOUNT</h4>
+                <Link href="/profile">My Account</Link>
+                <Link href="/orders">My Orders</Link>
+                <Link href="/cart">My Bag</Link>
+              </div>
+              <div className="footer-nav-group">
+                <h4 className="footer-nav-title">SUPPORT</h4>
+                <a href="mailto:nizoecommerceapp@gmail.com">Contact Us</a>
+                <Link href="/">Returns &amp; Exchanges</Link>
+                <Link href="/">Size Guide</Link>
+              </div>
             </div>
-            <div className="footer-links" style={{ display: 'flex', gap: '3rem', justifyContent: 'center', marginBottom: '4rem', fontSize: '0.75rem', letterSpacing: '2px' }}>
-              <Link href="/about">ABOUT</Link>
-              <Link href="/contact">CONTACT</Link>
-              <Link href="/shipping">SHIPPING</Link>
-              <Link href="/returns">RETURNS</Link>
+            <div className="footer-bottom">
+              <p>© 2026 NIZO CLOTHING STORE. ALL RIGHTS RESERVED.</p>
+              <p className="footer-contact-note">For support: <a href="mailto:nizoecommerceapp@gmail.com">nizoecommerceapp@gmail.com</a></p>
             </div>
-            <p style={{ color: 'var(--muted)', fontSize: '0.65rem', letterSpacing: '1px' }}>© 2026 NIZO CLOTHING STORE. ALL RIGHTS RESERVED.</p>
           </div>
         </footer>
 

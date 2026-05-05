@@ -17,8 +17,18 @@ export default function Header() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
+    const query = searchQuery.trim();
+    if (query) {
+      // Log search history if logged in
+      if (session) {
+        fetch("/api/search-history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query }),
+        }).catch(err => console.error("Search logging failed", err));
+      }
+      
+      router.push(`/shop?q=${encodeURIComponent(query)}`);
       setIsSearchOpen(false);
       setSearchQuery("");
     }
@@ -34,7 +44,7 @@ export default function Header() {
 
         {/* Left Side: Branding */}
         <Link href="/" className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-          <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '32px', width: 'auto' }} />
+          <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '64px', width: 'auto' }} />
         </Link>
 
         {/* Center: Navigation - Hidden when search is open on small screens, or just always there */}
@@ -70,33 +80,22 @@ export default function Header() {
           <form 
             onSubmit={handleSearch} 
             className="search-overlay"
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center',
-              backgroundColor: 'var(--secondary)',
-              padding: '0.25rem 1rem',
-              borderRadius: '20px',
-              border: '1px solid var(--border)',
-              marginRight: '1rem',
-              width: '300px',
-              animation: 'expand 0.3s ease'
-            }}
           >
             <input 
               autoFocus
               type="text" 
-              placeholder="Search..." 
+              placeholder="Search products..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ border: 'none', background: 'transparent', width: '100%', padding: '0.5rem', outline: 'none', fontSize: '0.875rem' }}
+              className="search-overlay-input"
             />
-            <button type="submit"><FiSearch size={18} /></button>
+            <button type="submit" className="icon-btn"><FiSearch size={18} /></button>
             <button 
               type="button" 
               onClick={() => setIsSearchOpen(false)} 
-              style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--muted)' }}
+              className="icon-btn search-close-btn"
             >
-              <FiX size={16} />
+              <FiX size={18} />
             </button>
           </form>
         )}

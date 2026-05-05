@@ -19,6 +19,7 @@ export async function GET() {
         id: true,
         name: true,
         email: true,
+        phone: true,
         createdAt: true,
         _count: {
           select: { orders: true }
@@ -35,6 +36,7 @@ export async function GET() {
       id: c.id,
       name: c.name,
       email: c.email,
+      phone: c.phone,
       memberSince: c.createdAt,
       orderCount: c._count.orders,
       totalSpend: c.orders.reduce((sum, o) => sum + o.totalAmount, 0)

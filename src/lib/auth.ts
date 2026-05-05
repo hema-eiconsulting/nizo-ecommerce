@@ -1,61 +1,40 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    }),
     CredentialsProvider({
-      name: "OTP",
+      name: "Credentials",
       credentials: {
-        phone: { label: "Phone", type: "text" },
-        otp: { label: "OTP", type: "text" },
-        name: { label: "Name", type: "text" },
-        isSignup: { label: "Is Signup", type: "text" },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.phone || !credentials?.otp) {
-          throw new Error("Phone and OTP are required");
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
         }
 
-        // 1. Retrieve stored OTP record
-        const otpRecord = await prisma.otpVerification.findUnique({
-          where: { phone: credentials.phone },
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
         });
 
-        if (!otpRecord) {
-          throw new Error("OTP not found. Please request a new one.");
+        if (!user || !user.password) {
+          throw new Error("No user found with this email");
         }
 
-        // 2. Check expiry
-        if (new Date() > otpRecord.expiresAt) {
-          await prisma.otpVerification.delete({ where: { phone: credentials.phone } });
-          throw new Error("OTP has expired. Please request a new one.");
-        }
+        const isValid = await bcrypt.compare(credentials.password, user.password);
 
-        // 3. Verify OTP hash
-        const isValid = await bcrypt.compare(credentials.otp, otpRecord.otp);
         if (!isValid) {
-          throw new Error("Invalid OTP. Please try again.");
-        }
-
-        // 4. Delete the used OTP
-        await prisma.otpVerification.delete({ where: { phone: credentials.phone } });
-
-        // 5. Find or create user
-        let user = await prisma.user.findUnique({
-          where: { phone: credentials.phone },
-        });
-
-        if (!user) {
-          // New user — create account with name if provided
-          user = await prisma.user.create({
-            data: {
-              phone: credentials.phone,
-              name: credentials.name || "Customer",
-              role: "CUSTOMER",
-            },
-          });
+          throw new Error("Invalid password");
         }
 
         return {
@@ -69,12 +48,13 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   session: {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
@@ -87,6 +67,23 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).id = token.id;
       }
       return session;
+    },
+  },
+  events: {
+    async signIn({ user }) {
+      // Run updates in parallel to speed up login process
+      Promise.all([
+        prisma.user.update({
+          where: { id: user.id },
+          data: { lastLogin: new Date() },
+        }),
+        // Ensure user has a cart without blocking
+        prisma.cart.findUnique({ where: { userId: user.id } }).then(async (cart) => {
+          if (!cart) {
+            await prisma.cart.create({ data: { userId: user.id } });
+          }
+        })
+      ]).catch(err => console.error("SignIn Event Error:", err));
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

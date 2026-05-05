@@ -69,7 +69,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <FiArrowLeft size={20} /> GO BACK
         </Link>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 450px', gap: '4rem' }}>
+        <div className="product-detail-grid">
           {/* Left: Gallery */}
           <div style={{ display: 'flex', gap: '1rem' }}>
              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '80px' }}>
@@ -143,7 +143,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     return (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <p style={{ color: 'var(--danger)', fontSize: '0.8rem', fontWeight: '500' }}>
-                          {selectedSize && inCartQty >= dbStock ? "ALL AVAILABLE STOCK IS IN YOUR BAG" : "CURRENTLY OUT OF STOCK"}
+                          {selectedSize && dbStock > 0 && inCartQty >= dbStock ? "ALL AVAILABLE STOCK IS IN YOUR BAG" : "CURRENTLY OUT OF STOCK"}
                         </p>
                         <button className="btn btn-primary" style={{ width: '100%', padding: '1.25rem' }}>
                           NOTIFY ME WHEN {selectedSize} IS RESTOCKED

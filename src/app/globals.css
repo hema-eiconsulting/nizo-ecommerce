@@ -889,7 +889,256 @@ button {
   color: var(--primary);
 }
 
-/* Mobile Responsiveness (Max width: 768px) */
+/* ======= PAGE SHAKE FIX ======= */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* ======= SEARCH OVERLAY ======= */
+.search-overlay {
+  display: flex;
+  align-items: center;
+  background-color: var(--secondary);
+  padding: 0.4rem 1rem;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  margin-right: 1rem;
+  width: 100%;
+  max-width: 400px;
+  animation: expand 0.3s ease;
+  flex: 1;
+}
+
+.search-overlay-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 0.5rem;
+  outline: none;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--foreground);
+}
+
+.search-overlay-input::placeholder {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.search-close-btn {
+  margin-left: 0.25rem;
+  color: var(--muted);
+}
+
+@keyframes expand {
+  from { opacity: 0; transform: scaleX(0.8); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+/* ======= FOOTER ======= */
+.site-footer {
+  padding: 5rem 0 2.5rem;
+  background-color: var(--secondary);
+  border-top: 1px solid var(--border);
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-tagline {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  max-width: 320px;
+}
+
+.footer-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.2s ease;
+}
+
+.footer-email:hover {
+  color: var(--button-bg);
+}
+
+.footer-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-nav-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.footer-nav-group a {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+
+.footer-nav-group a:hover {
+  color: var(--foreground);
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-bottom p {
+  color: var(--muted);
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+}
+
+.footer-contact-note a {
+  color: var(--foreground);
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.footer-contact-note a:hover {
+  color: var(--button-bg);
+}
+
+/* ======= PRODUCT DETAIL GRID ======= */
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 4rem;
+}
+
+/* ======= PROFILE PAGE ======= */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2rem;
+  gap: 1.5rem;
+}
+
+.profile-user-info {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+
+.profile-avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  background-color: var(--secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.profile-user-text {
+  min-width: 0;
+}
+
+.profile-user-name {
+  font-size: 3rem;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.profile-user-email {
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  word-break: break-all;
+}
+
+.profile-signout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ======= CHECKOUT GRID ======= */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 5rem;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group-full {
+  grid-column: span 2;
+}
+
+/* ======= MOBILE RESPONSIVENESS ======= */
+
+/* Tablet breakpoint */
+@media (max-width: 1024px) {
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .checkout-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+}
+
+/* Mobile breakpoint (768px) */
 @media (max-width: 768px) {
   .hero-content h1 {
     font-size: 3.5rem;
@@ -915,7 +1164,7 @@ button {
   }
 
   .product-grid {
-    grid-template-columns: 1fr 1fr; /* Keep 2 cols on mobile for products if feasible, or let parent container handle it */
+    grid-template-columns: 1fr 1fr;
   }
 
   /* Make sure admin panels stack if they share global css */
@@ -934,11 +1183,88 @@ button {
   .desktop-nav {
     display: none !important;
   }
+
+  /* Profile - stack vertically */
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+    gap: 1.5rem;
+  }
+
+  .profile-user-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .profile-avatar,
+  .profile-avatar-placeholder {
+    width: 70px;
+    height: 70px;
+    font-size: 1.5rem;
+  }
+
+  .profile-user-name {
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+
+  .profile-signout-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.875rem 1.5rem;
+  }
+
+  /* Checkout - stack order summary below */
+  .checkout-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group-full {
+    grid-column: span 1;
+  }
+
+  /* Footer - stack vertically */
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  /* Search bar - full width on mobile */
+  .search-overlay {
+    max-width: 100%;
+    margin-right: 0.5rem;
+  }
+
+  .search-overlay-input {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
   .hero-content h1 {
     font-size: 2.5rem;
     letter-spacing: 0.25rem;
+  }
+
+  .profile-user-name {
+    font-size: 1.75rem;
+  }
+
+  .footer-tagline {
+    font-size: 0.8125rem;
   }
 }
