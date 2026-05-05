@@ -7,8 +7,8 @@ export default withAuth({
 });
 
 export const config = {
-  // Protect all pages except public ones
+  // Protect all pages except public ones and static assets like images
   matcher: [
-    "/((?!api|login|register|_next/static|_next/image|favicon.ico|about|shop|product|new-arrivals|contact).*)",
+    "/((?!api|login|register|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|about|shop|product|new-arrivals|contact).*)",
   ],
 };
