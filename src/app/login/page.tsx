@@ -154,7 +154,7 @@ function LoginContent() {
       <div className="auth-card">
         {/* Logo */}
         <div className="auth-header">
-          <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '48px', width: 'auto', marginBottom: '0.5rem' }} />
+          <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '120px', width: 'auto', marginBottom: '1rem' }} />
           <p>
             {step === "phone" && "Login or sign up with your phone number"}
             {step === "otp" && `Enter the OTP sent to +91 ${phone}`}
