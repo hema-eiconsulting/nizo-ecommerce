@@ -61,7 +61,7 @@ function LoginContent() {
       <div className="auth-card">
         <div className="auth-header">
           <Link href="/">
-            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '70px', width: 'auto', marginBottom: '0.5rem' }} />
+            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '60px', width: 'auto', marginBottom: '0.5rem' }} />
           </Link>
           <h1>WELCOME BACK</h1>
           <p>Login to your account to continue shopping</p>
@@ -87,15 +87,7 @@ function LoginContent() {
           </div>
 
           <div className="form-group">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <label className="label" style={{ marginBottom: 0 }}>Password</label>
-              <a 
-                href="/forgot-password" 
-                style={{ fontSize: '0.75rem', color: 'var(--muted)', textDecoration: 'underline', position: 'relative', zIndex: 10, cursor: 'pointer' }}
-              >
-                Forgot Password?
-              </a>
-            </div>
+            <label className="label">Password</label>
             <div style={{ position: 'relative' }}>
               <FiLock style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
               <input
@@ -114,6 +106,14 @@ function LoginContent() {
               >
                 {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
               </button>
+            </div>
+            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+              <a 
+                href="/forgot-password" 
+                style={{ fontSize: '0.75rem', color: 'var(--muted)', textDecoration: 'underline', position: 'relative', zIndex: 10, cursor: 'pointer' }}
+              >
+                Forgot Password?
+              </a>
             </div>
           </div>
 

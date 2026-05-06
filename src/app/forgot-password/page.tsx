@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
       <div className="auth-card">
         <div className="auth-header">
           <Link href="/">
-            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '70px', width: 'auto', marginBottom: '0.5rem' }} />
+            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '60px', width: 'auto', marginBottom: '0.5rem' }} />
           </Link>
           <h1>RESET PASSWORD</h1>
           <p>Enter your email and a new password</p>
