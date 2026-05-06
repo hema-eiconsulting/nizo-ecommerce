@@ -118,7 +118,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   </button>
                 </div>
                 <p style={{ fontSize: '1.5rem', fontWeight: '600', marginTop: '1.5rem', color: 'var(--foreground)' }}>₹{product.price.toLocaleString()}</p>
-             </div>v>
+             </div>
 
              <div>
                 <h3 style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '1rem' }}>SELECT SIZE</h3>
