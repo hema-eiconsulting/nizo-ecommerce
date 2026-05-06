@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
+import { FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import "../auth.css";
 
@@ -17,6 +17,7 @@ function LoginContent() {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,14 +87,26 @@ function LoginContent() {
             <div style={{ position: 'relative' }}>
               <FiLock style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="input"
-                style={{ paddingLeft: '3rem' }}
+                style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
               />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            </div>
+            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+              <Link href="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--muted)', textDecoration: 'underline' }}>
+                Forgot Password?
+              </Link>
             </div>
           </div>
 

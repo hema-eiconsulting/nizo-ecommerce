@@ -1,14 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const ADMIN_URL = "https://admin-fvcis6d6a-hema-eiconsultings-projects.vercel.app";
-
 const corsHeaders = {
-  "Access-Control-Allow-Origin": ADMIN_URL,
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key",
 };
 
 export async function OPTIONS() {
@@ -22,9 +18,12 @@ export async function PATCH(
   try {
     const { id } = await context.params;
 
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user as any)?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+    // Check for API key or skip if not in env
+    const apiKey = req.headers.get("x-api-key");
+    const validApiKey = process.env.ADMIN_API_KEY;
+    
+    if (validApiKey && apiKey !== validApiKey) {
+      return NextResponse.json({ error: "Unauthorized API Key" }, { status: 401, headers: corsHeaders });
     }
 
     const { status } = await req.json();

@@ -3,60 +3,59 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { FiUser, FiMail, FiPhone, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
-import { FcGoogle } from "react-icons/fc";
+import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi";
 import "../auth.css";
 
-export default function RegisterPage() {
+export default function ForgotPasswordPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [data, setData] = useState({
-    name: "",
     email: "",
-    phone: "",
-    password: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
+
+    if (data.newPassword !== data.confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ email: data.email, newPassword: data.newPassword }),
       });
 
       const result = await res.json();
 
       if (!res.ok) {
-        setError(result.message || "Registration failed");
-        setLoading(false);
-        return;
+        setError(result.message || "Failed to reset password");
+      } else {
+        setSuccess("Password updated successfully! You can now login with your new password.");
+        setTimeout(() => {
+          router.push("/login");
+        }, 3000);
       }
-
-      // Auto-login after signup
-      const loginRes = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: true,
-        callbackUrl: "/profile",
-      });
     } catch (err) {
       setError("An unexpected error occurred");
+    } finally {
       setLoading(false);
     }
-  };
-
-  const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl: "/" });
   };
 
   return (
@@ -66,29 +65,14 @@ export default function RegisterPage() {
           <Link href="/">
             <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '70px', width: 'auto', marginBottom: '0.5rem' }} />
           </Link>
-          <h1>CREATE ACCOUNT</h1>
-          <p>Join NIZO and start your shopping journey</p>
+          <h1>RESET PASSWORD</h1>
+          <p>Enter your email and a new password</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
+        {success && <div style={{ padding: '1rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '4px', marginBottom: '1.5rem', fontSize: '0.875rem', textAlign: 'center' }}>{success}</div>}
 
         <form onSubmit={onSubmit} className="auth-form">
-          <div className="form-group">
-            <label className="label">Full Name</label>
-            <div style={{ position: 'relative' }}>
-              <FiUser style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
-              <input
-                type="text"
-                className="input"
-                style={{ paddingLeft: '3rem' }}
-                value={data.name}
-                onChange={(e) => setData({ ...data, name: e.target.value })}
-                placeholder="John Doe"
-                required
-              />
-            </div>
-          </div>
-
           <div className="form-group">
             <label className="label">Email Address</label>
             <div style={{ position: 'relative' }}>
@@ -106,32 +90,15 @@ export default function RegisterPage() {
           </div>
 
           <div className="form-group">
-            <label className="label">Phone Number</label>
-            <div style={{ position: 'relative' }}>
-              <FiPhone style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
-              <input
-                type="tel"
-                className="input"
-                style={{ paddingLeft: '3rem' }}
-                value={data.phone}
-                onChange={(e) => setData({ ...data, phone: e.target.value.replace(/\D/g, "").slice(0, 10) })}
-                placeholder="10-digit mobile number"
-                maxLength={10}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="label">Password</label>
+            <label className="label">New Password</label>
             <div style={{ position: 'relative' }}>
               <FiLock style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
               <input
                 type={showPassword ? "text" : "password"}
                 className="input"
                 style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
-                value={data.password}
-                onChange={(e) => setData({ ...data, password: e.target.value })}
+                value={data.newPassword}
+                onChange={(e) => setData({ ...data, newPassword: e.target.value })}
                 placeholder="••••••••"
                 required
               />
@@ -145,31 +112,43 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          <div className="form-group">
+            <label className="label">Confirm New Password</label>
+            <div style={{ position: 'relative' }}>
+              <FiLock style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                className="input"
+                style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
+                value={data.confirmPassword}
+                onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
+                placeholder="••••••••"
+                required
+              />
+              <button 
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                {showConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            </div>
+          </div>
+
           <button
             type="submit"
             className={`btn btn-primary ${loading ? "btn-disabled" : ""}`}
             style={{ width: '100%', marginTop: '1rem' }}
-            disabled={loading}
+            disabled={loading || !!success}
           >
-            {loading ? "Creating account..." : "SIGN UP"}
+            {loading ? "Updating..." : "RESET PASSWORD"}
           </button>
         </form>
 
-        <div className="auth-divider">
-          <span>OR</span>
-        </div>
-
-        <button
-          onClick={handleGoogleLogin}
-          className="btn btn-outline"
-          style={{ width: '100%', display: 'flex', gap: '1rem', alignItems: 'center' }}
-        >
-          <FcGoogle size={20} />
-          CONTINUE WITH GOOGLE
-        </button>
-
-        <div className="auth-footer">
-          Already have an account? <Link href="/login" style={{ fontWeight: '600', color: 'var(--foreground)' }}>Login</Link>
+        <div className="auth-footer" style={{ marginTop: '2rem' }}>
+          <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', color: 'var(--foreground)' }}>
+            <FiArrowLeft /> Back to Login
+          </Link>
         </div>
       </div>
     </div>
