@@ -1,17 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/components/providers/CartProvider";
 import Header from "@/components/layout/Header";
-import { FiMapPin, FiPhone, FiUser, FiCreditCard, FiArrowRight } from "react-icons/fi";
+import { FiMapPin, FiPhone, FiUser, FiCreditCard, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function CheckoutPage() {
+  const { data: session } = useSession();
   const { cart, total, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [currentStep, setCurrentStep] = useState(1); // 1: Address, 2: Payment
   const [paymentMethod, setPaymentMethod] = useState("ONLINE"); // ONLINE or COD
+  const [finalTotal, setFinalTotal] = useState(0);
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
 
   const [address, setAddress] = useState({
     name: "",
@@ -23,8 +27,50 @@ export default function CheckoutPage() {
     pinCode: "",
   });
 
+  // 1. Pre-fill basic info from session
+  useEffect(() => {
+    if (session?.user) {
+      setAddress(prev => ({
+        ...prev,
+        name: session.user?.name || prev.name,
+        email: session.user?.email || prev.email,
+        phone: (session.user as any).phone || prev.phone,
+      }));
+      
+      // Fetch saved addresses
+      fetch("/api/user/addresses")
+        .then(res => res.json())
+        .then(data => {
+          if (data.addresses && data.addresses.length > 0) {
+            setSavedAddresses(data.addresses);
+            // Pre-fill with default address if available
+            const defaultAddr = data.addresses[0];
+            setAddress(prev => ({
+              ...prev,
+              street: defaultAddr.street,
+              city: defaultAddr.city,
+              state: defaultAddr.state,
+              pinCode: defaultAddr.pinCode,
+              phone: defaultAddr.phone || prev.phone
+            }));
+          }
+        });
+    }
+  }, [session]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAddress({ ...address, [e.target.name]: e.target.value });
+  };
+
+  const selectSavedAddress = (addr: any) => {
+    setAddress({
+      ...address,
+      street: addr.street,
+      city: addr.city,
+      state: addr.state,
+      pinCode: addr.pinCode,
+      phone: addr.phone || address.phone
+    });
   };
 
   const validateAddress = () => {
@@ -44,9 +90,17 @@ export default function CheckoutPage() {
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setFinalTotal(total); // Save total before clearing cart
 
     try {
-      // 1. Create Order in Backend
+      // 1. Save address to user's profile if it's not already there
+      await fetch("/api/user/addresses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...address, isDefault: true })
+      });
+
+      // 2. Create Order in Backend
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -54,19 +108,18 @@ export default function CheckoutPage() {
           items: cart,
           address,
           totalAmount: total,
-          paymentMethod // Added paymentMethod to payload
+          paymentMethod
         })
       });
 
       const orderData = await res.json();
       if (!res.ok) throw new Error(orderData.error);
 
-      // 2. Handle based on Payment Method
+      // 3. Handle Payment
       if (paymentMethod === "COD") {
         setOrderComplete(true);
         clearCart();
       } else {
-        // Online Payment via Razorpay
         const options = {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
           amount: orderData.amount,
@@ -90,7 +143,7 @@ export default function CheckoutPage() {
               setOrderComplete(true);
               clearCart();
             } else {
-              alert("Payment verification failed. Please contact support.");
+              alert("Payment verification failed.");
             }
           },
           prefill: {
@@ -98,9 +151,7 @@ export default function CheckoutPage() {
             email: address.email,
             contact: address.phone
           },
-          theme: {
-            color: "#B08968"
-          }
+          theme: { color: "#B08968" }
         };
 
         const rzp = new (window as any).Razorpay(options);
@@ -119,15 +170,17 @@ export default function CheckoutPage() {
       <>
         <Header />
         <div className="container" style={{ textAlign: 'center', padding: '10rem 1rem' }}>
-          <div style={{ backgroundColor: 'var(--success)', color: 'white', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
-            <FiArrowRight size={40} style={{ transform: 'rotate(-45deg)' }} />
+          <div style={{ backgroundColor: '#22c55e', color: 'white', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
+            <FiCheckCircle size={40} />
           </div>
-          <h1 style={{ fontSize: '3rem', fontWeight: '300', marginBottom: '1rem', letterSpacing: '5px' }}>THANK YOU</h1>
+          <h1 style={{ fontSize: '3rem', fontWeight: '700', marginBottom: '1rem', letterSpacing: '5px' }}>THANK YOU</h1>
           <p style={{ color: 'var(--muted)', marginBottom: '1.25rem' }}>Your order has been placed successfully.</p>
           {paymentMethod === "COD" && (
-            <p style={{ marginBottom: '3rem', fontWeight: '600' }}>Please keep ₹{total} ready for Cash on Delivery.</p>
+            <p style={{ marginBottom: '3rem', fontWeight: '600', fontSize: '1.25rem' }}>
+              Please keep ₹{finalTotal} ready for Cash on Delivery.
+            </p>
           )}
-          <Link href="/shop" className="btn btn-primary" style={{ padding: '1.25rem 3rem' }}>CONTINUE SHOPPING</Link>
+          <Link href="/profile" className="btn btn-primary" style={{ padding: '1.25rem 3rem' }}>VIEW YOUR ORDERS</Link>
         </div>
       </>
     );
@@ -150,10 +203,27 @@ export default function CheckoutPage() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '5rem' }}>
-          {/* Left Side: Steps */}
           <div>
             {currentStep === 1 ? (
               <form onSubmit={handleNextStep} style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+                {savedAddresses.length > 0 && (
+                  <section>
+                    <h2 style={{ fontSize: '1rem', marginBottom: '1.5rem', color: 'var(--muted)' }}>SELECT SAVED ADDRESS</h2>
+                    <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '1rem' }}>
+                      {savedAddresses.map(addr => (
+                        <div 
+                          key={addr.id} 
+                          onClick={() => selectSavedAddress(addr)}
+                          style={{ minWidth: '200px', padding: '1rem', border: '1px solid var(--border)', cursor: 'pointer', fontSize: '0.875rem' }}
+                        >
+                          <p style={{ fontWeight: '600' }}>{addr.city}, {addr.state}</p>
+                          <p style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{addr.street}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 <section>
                   <h2 style={{ fontSize: '1.25rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <FiUser /> CONTACT INFORMATION
@@ -161,15 +231,15 @@ export default function CheckoutPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                     <div className="form-group">
                       <label>Full Name</label>
-                      <input type="text" name="name" required className="input" placeholder="e.g. John Doe" value={address.name} onChange={handleInputChange} />
+                      <input type="text" name="name" required className="input" placeholder="Your Name" value={address.name} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
                       <label>Email Address</label>
-                      <input type="email" name="email" required className="input" placeholder="e.g. john@example.com" value={address.email} onChange={handleInputChange} />
+                      <input type="email" name="email" required className="input" placeholder="Your Email" value={address.email} onChange={handleInputChange} />
                     </div>
                     <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                      <label>Phone Number</label>
-                      <input type="tel" name="phone" required className="input" placeholder="e.g. 9876543210" value={address.phone} onChange={handleInputChange} />
+                      <label>Phone Number (Mandatory for Delivery)</label>
+                      <input type="tel" name="phone" required className="input" placeholder="10-digit Phone Number" value={address.phone} onChange={handleInputChange} />
                     </div>
                   </div>
                 </section>
@@ -181,15 +251,15 @@ export default function CheckoutPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                     <div className="form-group" style={{ gridColumn: 'span 2' }}>
                       <label>Street Address</label>
-                      <input type="text" name="street" required className="input" placeholder="House No, Building, Street" value={address.street} onChange={handleInputChange} />
+                      <input type="text" name="street" required className="input" placeholder="House No, Street, Locality" value={address.street} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
                       <label>City</label>
-                      <input type="text" name="city" required className="input" placeholder="e.g. Mumbai" value={address.city} onChange={handleInputChange} />
+                      <input type="text" name="city" required className="input" placeholder="City" value={address.city} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
                       <label>State</label>
-                      <input type="text" name="state" required className="input" placeholder="e.g. Maharashtra" value={address.state} onChange={handleInputChange} />
+                      <input type="text" name="state" required className="input" placeholder="State" value={address.state} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
                       <label>Pin Code</label>
@@ -215,7 +285,6 @@ export default function CheckoutPage() {
                   </div>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    {/* COD Option */}
                     <div 
                       onClick={() => setPaymentMethod("COD")}
                       style={{ 
@@ -224,8 +293,7 @@ export default function CheckoutPage() {
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '1.5rem',
-                        position: 'relative'
+                        gap: '1.5rem'
                       }}
                     >
                       <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -233,11 +301,10 @@ export default function CheckoutPage() {
                       </div>
                       <div>
                         <p style={{ fontWeight: '600', marginBottom: '0.25rem' }}>CASH ON DELIVERY (COD)</p>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Pay when your order is delivered.</p>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Pay ₹{total} when delivered.</p>
                       </div>
                     </div>
 
-                    {/* Online Option */}
                     <div 
                       onClick={() => setPaymentMethod("ONLINE")}
                       style={{ 
@@ -246,8 +313,7 @@ export default function CheckoutPage() {
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '1.5rem',
-                        position: 'relative'
+                        gap: '1.5rem'
                       }}
                     >
                       <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -255,9 +321,8 @@ export default function CheckoutPage() {
                       </div>
                       <div style={{ flex: 1 }}>
                         <p style={{ fontWeight: '600', marginBottom: '0.25rem' }}>ONLINE PAYMENT</p>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Pay via Card, UPI, Netbanking (Razorpay)</p>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Card, UPI, Netbanking</p>
                       </div>
-                      <img src="https://razorpay.com/favicon.png" alt="Razorpay" style={{ width: '24px' }} />
                     </div>
                   </div>
                 </section>
@@ -269,36 +334,25 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* Right Side: Order Summary */}
           <div style={{ position: 'sticky', top: '120px', height: 'fit-content' }}>
             <div className="admin-card" style={{ padding: '2.5rem', backgroundColor: 'var(--secondary)' }}>
               <h2 style={{ fontSize: '1.125rem', marginBottom: '2.5rem', letterSpacing: '2px' }}>ORDER SUMMARY</h2>
-              
               <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {cart.map(item => (
                   <div key={item.id} style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' }}>
-                    <div style={{ width: '60px', aspectRatio: '4/5', overflow: 'hidden', borderRadius: '4px' }}>
+                    <div style={{ width: '50px', height: '50px', overflow: 'hidden', borderRadius: '4px' }}>
                       <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                     <div style={{ flex: 1 }}>
-                       <h4 style={{ fontSize: '0.875rem', fontWeight: '500' }}>{item.name}</h4>
-                       <p style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Qty: {item.quantity} | Size: {item.size}</p>
+                       <h4 style={{ fontSize: '0.8rem' }}>{item.name}</h4>
+                       <p style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>Qty: {item.quantity}</p>
                     </div>
-                    <span>₹{item.price * item.quantity}</span>
+                    <span style={{ fontSize: '0.875rem' }}>₹{item.price * item.quantity}</span>
                   </div>
                 ))}
               </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid var(--border)', paddingTop: '2rem', marginTop: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                   <span style={{ color: 'var(--muted)' }}>Subtotal</span>
-                   <span>₹{total}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                   <span style={{ color: 'var(--muted)' }}>Shipping</span>
-                   <span style={{ color: 'var(--success)' }}>FREE</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '700', fontSize: '1.25rem', marginTop: '1rem' }}>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '700', fontSize: '1.125rem' }}>
                    <span>TOTAL</span>
                    <span>₹{total}</span>
                 </div>

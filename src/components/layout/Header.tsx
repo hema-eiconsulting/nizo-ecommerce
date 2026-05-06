@@ -17,8 +17,18 @@ export default function Header() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
+    const query = searchQuery.trim();
+    if (query) {
+      // Log search history if logged in
+      if (session) {
+        fetch("/api/search-history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query }),
+        }).catch(err => console.error("Search logging failed", err));
+      }
+      
+      router.push(`/shop?q=${encodeURIComponent(query)}`);
       setIsSearchOpen(false);
       setSearchQuery("");
     }
@@ -34,7 +44,7 @@ export default function Header() {
 
         {/* Left Side: Branding */}
         <Link href="/" className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-          <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '32px', width: 'auto' }} />
+          <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '64px', width: 'auto' }} />
         </Link>
 
         {/* Center: Navigation - Hidden when search is open on small screens, or just always there */}

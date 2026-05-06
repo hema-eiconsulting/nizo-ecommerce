@@ -77,10 +77,9 @@ export default function HomePage() {
               <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '64px', width: 'auto' }} />
             </div>
             <div className="footer-links" style={{ display: 'flex', gap: '3rem', justifyContent: 'center', marginBottom: '4rem', fontSize: '0.75rem', letterSpacing: '2px' }}>
-              <Link href="/about">ABOUT</Link>
-              <Link href="/contact">CONTACT</Link>
-              <Link href="/shipping">SHIPPING</Link>
-              <Link href="/returns">RETURNS</Link>
+              <Link href="/shop">SHOP</Link>
+              <Link href="/profile">MY ACCOUNT</Link>
+              <Link href="/">SUPPORT</Link>
             </div>
             <p style={{ color: 'var(--muted)', fontSize: '0.65rem', letterSpacing: '1px' }}>© 2026 NIZO CLOTHING STORE. ALL RIGHTS RESERVED.</p>
           </div>
