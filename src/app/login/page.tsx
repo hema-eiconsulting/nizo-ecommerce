@@ -87,7 +87,16 @@ function LoginContent() {
           </div>
 
           <div className="form-group">
-            <label className="label">Password</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <label className="label" style={{ marginBottom: 0 }}>Password</label>
+              <Link 
+                href="/forgot-password" 
+                onClick={() => setPassword("")}
+                style={{ fontSize: '0.75rem', color: 'var(--muted)', textDecoration: 'underline', position: 'relative', zIndex: 10 }}
+              >
+                Forgot Password?
+              </Link>
+            </div>
             <div style={{ position: 'relative' }}>
               <FiLock style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
               <input
@@ -107,16 +116,6 @@ function LoginContent() {
                 {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
               </button>
             </div>
-          </div>
-
-          <div style={{ textAlign: 'right', marginBottom: '1rem', position: 'relative', zIndex: 10 }}>
-            <Link 
-              href="/forgot-password" 
-              onClick={() => setPassword("")}
-              style={{ fontSize: '0.85rem', color: 'var(--muted)', textDecoration: 'underline', padding: '0.5rem 0', display: 'inline-block' }}
-            >
-              Forgot Password?
-            </Link>
           </div>
 
           <button
