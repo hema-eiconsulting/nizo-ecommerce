@@ -69,7 +69,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <FiArrowLeft size={20} /> GO BACK
         </Link>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 450px', gap: '4rem' }}>
+        <div className="product-detail-grid">
           {/* Left: Gallery */}
           <div style={{ display: 'flex', gap: '1rem' }}>
              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '80px' }}>

@@ -57,31 +57,30 @@ export default function ProfilePage() {
     <>
       <Header />
       <div className="container" style={{ paddingTop: '5rem', paddingBottom: '10rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '5rem', borderBottom: '1px solid var(--border)', paddingBottom: '2rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+        <div className="profile-header">
+          <div className="profile-user-info">
             {session.user?.image ? (
               <img 
                 src={session.user.image} 
                 alt={session.user.name || "User"} 
-                style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '4px solid white', boxShadow: 'var(--shadow-md)' }} 
+                className="profile-avatar"
               />
             ) : (
-              <div style={{ width: '100px', height: '100px', backgroundColor: 'var(--secondary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: '700', color: 'var(--muted)' }}>
+              <div className="profile-avatar-placeholder">
                 {(session.user?.name || "U").charAt(0).toUpperCase()}
               </div>
             )}
-            <div>
+            <div className="profile-user-text">
               <span className="product-category-tag">Welcome back</span>
-              <h1 style={{ fontSize: '3rem', letterSpacing: '2px', fontWeight: '700' }}>{session.user?.name || "Customer"}</h1>
-              <p style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <h1 className="profile-user-name">{session.user?.name || "Customer"}</h1>
+              <p className="profile-user-email">
                 <FiMail /> {session.user?.email}
               </p>
             </div>
           </div>
           <button 
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="btn btn-outline"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+            className="btn btn-outline profile-signout-btn"
           >
             <FiLogOut /> SIGN OUT
           </button>

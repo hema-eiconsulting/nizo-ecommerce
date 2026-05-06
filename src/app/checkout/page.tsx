@@ -202,7 +202,7 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '5rem' }}>
+        <div className="checkout-grid">
           <div>
             {currentStep === 1 ? (
               <form onSubmit={handleNextStep} style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
@@ -228,7 +228,7 @@ export default function CheckoutPage() {
                   <h2 style={{ fontSize: '1.25rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <FiUser /> CONTACT INFORMATION
                   </h2>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                  <div className="form-grid-2">
                     <div className="form-group">
                       <label>Full Name</label>
                       <input type="text" name="name" required className="input" placeholder="Your Name" value={address.name} onChange={handleInputChange} />
@@ -237,7 +237,7 @@ export default function CheckoutPage() {
                       <label>Email Address</label>
                       <input type="email" name="email" required className="input" placeholder="Your Email" value={address.email} onChange={handleInputChange} />
                     </div>
-                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                    <div className="form-group form-group-full">
                       <label>Phone Number (Mandatory for Delivery)</label>
                       <input type="tel" name="phone" required className="input" placeholder="10-digit Phone Number" value={address.phone} onChange={handleInputChange} />
                     </div>
@@ -248,8 +248,8 @@ export default function CheckoutPage() {
                   <h2 style={{ fontSize: '1.25rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <FiMapPin /> SHIPPING ADDRESS
                   </h2>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                  <div className="form-grid-2">
+                    <div className="form-group form-group-full">
                       <label>Street Address</label>
                       <input type="text" name="street" required className="input" placeholder="House No, Street, Locality" value={address.street} onChange={handleInputChange} />
                     </div>
