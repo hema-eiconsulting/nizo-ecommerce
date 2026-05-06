@@ -3,13 +3,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   background-image:
     linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
     url('https://images.unsplash.com/photo-1549062572-544a64fb0c56?q=80&w=2574&auto=format&fit=crop');
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   padding: 1rem;
+  overscroll-behavior: none;
 }
 
 .auth-card {
@@ -20,8 +22,6 @@
   border-radius: 1rem;
   box-shadow: 0 8px 48px rgba(0,0,0,0.12);
   border: 1px solid rgba(0,0,0,0.06);
-  max-height: 95vh;
-  overflow-y: auto;
 }
 
 /* ── Header ────────────────────────────────────────────────── */
