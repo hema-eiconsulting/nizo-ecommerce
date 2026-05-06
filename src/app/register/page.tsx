@@ -155,7 +155,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             className={`btn btn-primary ${loading ? "btn-disabled" : ""}`}
-            style={{ width: '100%', marginTop: '1rem' }}
+            style={{ width: '100%', marginTop: '0.5rem' }}
             disabled={loading}
           >
             {loading ? "Creating account..." : "SIGN UP"}

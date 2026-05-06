@@ -18,7 +18,7 @@
   width: 100%;
   max-width: 440px;
   background: white;
-  padding: 1.75rem 2.5rem 1.5rem;
+  padding: 1.25rem 2rem 1rem;
   border-radius: 1rem;
   box-shadow: 0 8px 48px rgba(0,0,0,0.12);
   border: 1px solid rgba(0,0,0,0.06);
@@ -27,7 +27,7 @@
 /* ── Header ────────────────────────────────────────────────── */
 .auth-header {
   text-align: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .auth-header h1 {
@@ -214,7 +214,7 @@
 
 /* ── Footer ────────────────────────────────────────────────── */
 .auth-footer {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   text-align: center;
   font-size: 0.8rem;
   color: var(--muted, #9ca3af);
@@ -242,7 +242,7 @@
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 1rem 0;
+  margin: 0.75rem 0;
   color: var(--muted);
   font-size: 0.75rem;
   font-weight: 600;
