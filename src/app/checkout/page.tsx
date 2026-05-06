@@ -93,12 +93,14 @@ export default function CheckoutPage() {
     setFinalTotal(total); // Save total before clearing cart
 
     try {
-      // 1. Save address to user's profile if it's not already there
-      await fetch("/api/user/addresses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...address, isDefault: true })
-      });
+      // 1. Save address to user's profile if it's not already there (only for logged-in users)
+      if (session) {
+        await fetch("/api/user/addresses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...address, isDefault: true })
+        });
+      }
 
       // 2. Create Order in Backend
       const res = await fetch("/api/orders", {
@@ -175,6 +177,11 @@ export default function CheckoutPage() {
           </div>
           <h1 style={{ fontSize: '3rem', fontWeight: '700', marginBottom: '1rem', letterSpacing: '5px' }}>THANK YOU</h1>
           <p style={{ color: 'var(--muted)', marginBottom: '1.25rem' }}>Your order has been placed successfully.</p>
+          <div style={{ backgroundColor: 'var(--secondary)', padding: '1.5rem', borderRadius: '4px', marginBottom: '2rem', maxWidth: '500px', margin: '0 auto 2.5rem' }}>
+            <p style={{ fontSize: '0.9rem', color: 'var(--foreground)', lineHeight: '1.6' }}>
+              You can track your order status and view details in <strong>Profile &gt; Recent Orders</strong>.
+            </p>
+          </div>
           {paymentMethod === "COD" && (
             <p style={{ marginBottom: '3rem', fontWeight: '600', fontSize: '1.25rem' }}>
               Please keep ₹{finalTotal} ready for Cash on Delivery.
