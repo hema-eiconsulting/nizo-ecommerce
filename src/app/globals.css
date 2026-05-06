@@ -474,7 +474,7 @@ button {
   gap: 1rem;
   transition: transform 0.3s ease;
   width: 100%;
-  max-width: 350px; /* Prevent it from getting too huge */
+  max-width: 300px; /* Prevent it from getting too huge on laptop */
 }
 
 .product-image-container {
@@ -582,16 +582,18 @@ button {
 
 /* Size Button Styles */
 .size-button {
-  min-width: 60px;
-  height: 50px;
+  min-width: 48px;
+  height: 42px;
   border: 1px solid var(--border);
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 500;
+  font-size: 0.8125rem;
   transition: all 0.2s;
   border-radius: var(--radius-sm);
+  padding: 0 1rem;
 }
 
 .size-button:hover:not(.disabled) {
@@ -1029,8 +1031,9 @@ html, body {
 /* ======= PRODUCT DETAIL GRID ======= */
 .product-detail-grid {
   display: grid;
-  grid-template-columns: 1fr 450px;
-  gap: 4rem;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 5rem;
+  align-items: start;
 }
 
 /* ======= PROFILE PAGE ======= */

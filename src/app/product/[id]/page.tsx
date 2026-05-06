@@ -71,40 +71,54 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
         <div className="product-detail-grid">
           {/* Left: Gallery */}
-          <div style={{ display: 'flex', gap: '1rem' }}>
-             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '80px' }}>
+          <div style={{ display: 'flex', gap: '1.5rem' }}>
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '70px', flexShrink: 0 }}>
                 {product.images.map((img: string, i: number) => (
                   <div 
                     key={i} 
-                    style={{ cursor: 'pointer', opacity: mainImage === img ? 1 : 0.6, border: mainImage === img ? '1px solid var(--foreground)' : '1px solid var(--border)' }}
+                    style={{ 
+                      cursor: 'pointer', 
+                      opacity: mainImage === img ? 1 : 0.5, 
+                      border: mainImage === img ? '1px solid var(--foreground)' : '1px solid transparent',
+                      transition: 'all 0.2s ease'
+                    }}
                     onClick={() => setMainImage(img)}
                   >
-                    <img src={img} alt="" style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover' }} />
+                    <img src={img} alt="" style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover', display: 'block' }} />
                   </div>
                 ))}
              </div>
-              <div style={{ flex: 1, position: 'relative', overflow: 'hidden', backgroundColor: '#f9f9f9' }}>
+              <div style={{ flex: 1, position: 'relative', overflow: 'hidden', backgroundColor: '#f9f9f9', borderRadius: 'var(--radius-sm)' }}>
                 {mainImage && (
-                  <img src={mainImage} alt={product.name} style={{ width: '100%', height: 'auto', display: 'block' }} />
+                  <img 
+                    src={mainImage} 
+                    alt={product.name} 
+                    style={{ 
+                      width: '100%', 
+                      height: 'auto', 
+                      display: 'block',
+                      animation: 'fadeIn 0.5s ease' 
+                    }} 
+                  />
                 )}
-                {isSoldOut && <div className="sold-out-badge" style={{ transform: 'translate(-50%, -50%) rotate(-10deg)', fontSize: '2rem', padding: '1rem 3rem' }}>SOLD OUT</div>}
+                {isSoldOut && <div className="sold-out-badge" style={{ transform: 'translate(-50%, -50%) rotate(-10deg)', fontSize: '1.5rem', padding: '0.75rem 2rem' }}>SOLD OUT</div>}
               </div>
           </div>
-
+ 
           {/* Right: Info */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', paddingTop: '0.5rem' }}>
              <div>
-                <p style={{ color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-                  {product.gender} | {product.category}
+                <p style={{ color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.75rem', marginBottom: '0.75rem', fontWeight: '500' }}>
+                   {product.gender} — {product.category}
                 </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h1 style={{ fontSize: '2.5rem', fontWeight: '500' }}>{product.name}</h1>
-                  <button onClick={() => setIsWishlisted(!isWishlisted)} style={{ color: isWishlisted ? 'var(--danger)' : 'inherit' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem' }}>
+                  <h1 style={{ fontSize: '2.25rem', fontWeight: '500', lineHeight: '1.1', textTransform: 'uppercase', letterSpacing: '1px' }}>{product.name}</h1>
+                  <button onClick={() => setIsWishlisted(!isWishlisted)} style={{ color: isWishlisted ? 'var(--danger)' : 'inherit', marginTop: '0.5rem' }}>
                     <FiHeart size={24} fill={isWishlisted ? 'var(--danger)' : 'none'} />
                   </button>
                 </div>
-                <p style={{ fontSize: '1.5rem', fontWeight: '600', marginTop: '0.5rem' }}>₹{product.price}</p>
-             </div>
+                <p style={{ fontSize: '1.5rem', fontWeight: '600', marginTop: '1.5rem', color: 'var(--foreground)' }}>₹{product.price.toLocaleString()}</p>
+             </div>v>
 
              <div>
                 <h3 style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '1rem' }}>SELECT SIZE</h3>
@@ -145,7 +159,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         <p style={{ color: 'var(--danger)', fontSize: '0.8rem', fontWeight: '500' }}>
                           {selectedSize && dbStock > 0 && inCartQty >= dbStock ? "ALL AVAILABLE STOCK IS IN YOUR BAG" : "CURRENTLY OUT OF STOCK"}
                         </p>
-                        <button className="btn btn-primary" style={{ width: '100%', padding: '1.25rem' }}>
+                        <button className="btn btn-primary" style={{ width: '100%', padding: '1rem' }}>
                           NOTIFY ME WHEN {selectedSize} IS RESTOCKED
                         </button>
                       </div>
@@ -172,7 +186,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         </div>
                         <button 
                           className={`btn btn-primary ${!selectedSize ? 'btn-disabled' : ''}`} 
-                          style={{ flex: 1, padding: '1.25rem' }}
+                          style={{ flex: 1, padding: '1rem' }}
                           disabled={!selectedSize}
                           onClick={handleAddToCart}
                         >
@@ -182,7 +196,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     </div>
                   );
                 })()}
-                <button className="btn btn-outline" style={{ width: '100%', padding: '1.25rem' }}>
+                <button className="btn btn-outline" style={{ width: '100%', padding: '1rem' }}>
                   <FiShare2 style={{ marginRight: '0.5rem' }} /> SHARE PRODUCT
                 </button>
              </div>

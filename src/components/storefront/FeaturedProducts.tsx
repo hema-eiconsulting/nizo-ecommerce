@@ -28,7 +28,7 @@ export default function FeaturedProducts() {
 
   if (loading) {
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
         {[1,2,3,4].map(i => (
           <div key={i} className="skeleton" style={{ height: '400px', borderRadius: 'var(--radius-md)' }}></div>
         ))}
@@ -37,7 +37,7 @@ export default function FeaturedProducts() {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '2rem' }}>
       {products.map(product => (
         <ProductCard key={product.id} product={product} />
       ))}

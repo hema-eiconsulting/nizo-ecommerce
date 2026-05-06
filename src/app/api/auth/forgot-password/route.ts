@@ -14,9 +14,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Password must be at least 6 characters long" }, { status: 400 });
     }
 
+    const normalizedEmail = email.toLowerCase();
+
     // Check if user exists
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
@@ -29,7 +31,7 @@ export async function POST(req: Request) {
 
     // Update the password
     await prisma.user.update({
-      where: { email },
+      where: { email: normalizedEmail },
       data: { password: hashedPassword },
     });
 

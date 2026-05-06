@@ -115,7 +115,7 @@ function ShopContent() {
             </aside>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '3rem 2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '3rem 2rem' }}>
             {loading ? (
               [1, 2, 3, 4, 5, 6].map(i => (
                 <div key={i} className="skeleton" style={{ height: '400px', borderRadius: 'var(--radius-md)' }}></div>
