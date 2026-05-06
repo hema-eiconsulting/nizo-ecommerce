@@ -105,11 +105,15 @@ function LoginContent() {
                 {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
               </button>
             </div>
-            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
-              <Link href="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--muted)', textDecoration: 'underline' }}>
-                Forgot Password?
-              </Link>
-            </div>
+          </div>
+
+          <div style={{ textAlign: 'right', marginBottom: '1rem', position: 'relative', zIndex: 10 }}>
+            <Link 
+              href="/forgot-password" 
+              style={{ fontSize: '0.85rem', color: 'var(--muted)', textDecoration: 'underline', padding: '0.5rem 0', display: 'inline-block' }}
+            >
+              Forgot Password?
+            </Link>
           </div>
 
           <button
