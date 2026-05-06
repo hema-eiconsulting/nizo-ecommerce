@@ -28,13 +28,15 @@ function LoginContent() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: true,
-        callbackUrl: callbackUrl,
+        redirect: false,
       });
 
       if (result?.error) {
         setError(result.error);
         setLoading(false);
+      } else if (result?.ok) {
+        router.push(callbackUrl);
+        router.refresh();
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");

@@ -46,9 +46,16 @@ export default function RegisterPage() {
       const loginRes = await signIn("credentials", {
         email: data.email,
         password: data.password,
-        redirect: true,
-        callbackUrl: "/profile",
+        redirect: false,
       });
+
+      if (loginRes?.error) {
+        setError(loginRes.error);
+        setLoading(false);
+      } else if (loginRes?.ok) {
+        router.push("/profile");
+        router.refresh();
+      }
     } catch (err) {
       setError("An unexpected error occurred");
       setLoading(false);
