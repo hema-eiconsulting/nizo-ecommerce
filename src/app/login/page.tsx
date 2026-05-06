@@ -89,12 +89,12 @@ function LoginContent() {
           <div className="form-group">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
               <label className="label" style={{ marginBottom: 0 }}>Password</label>
-              <Link 
+              <a 
                 href="/forgot-password" 
-                style={{ fontSize: '0.75rem', color: 'var(--muted)', textDecoration: 'underline', position: 'relative', zIndex: 10 }}
+                style={{ fontSize: '0.75rem', color: 'var(--muted)', textDecoration: 'underline', position: 'relative', zIndex: 10, cursor: 'pointer' }}
               >
                 Forgot Password?
-              </Link>
+              </a>
             </div>
             <div style={{ position: 'relative' }}>
               <FiLock style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
