@@ -28,13 +28,13 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.password) {
-          throw new Error("No user found with this email");
+          throw new Error("No account found with this email. Please sign up or check your email.");
         }
 
         const isValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isValid) {
-          throw new Error("Invalid password");
+          throw new Error("Incorrect password. Please enter the correct password.");
         }
 
         return {
