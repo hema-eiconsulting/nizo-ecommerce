@@ -55,13 +55,6 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model OtpVerification {
-  id        String   @id @default(cuid())
-  phone     String   @unique
-  otp       String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-}
 
 model Cart {
   id        String     @id @default(uuid())
