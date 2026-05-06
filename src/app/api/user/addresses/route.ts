@@ -38,6 +38,14 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { name, phone, street, city, state, pinCode, isDefault } = body;
 
+    // If this is set as default, unset other defaults for this user
+    if (isDefault) {
+      await prisma.address.updateMany({
+        where: { userId, isDefault: true },
+        data: { isDefault: false }
+      });
+    }
+
     const address = await prisma.address.create({
       data: {
         userId,
@@ -52,8 +60,11 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ address });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Address save error:", error);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ 
+      message: "Failed to save address", 
+      error: error.message 
+    }, { status: 500 });
   }
 }

@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Header from "@/components/layout/Header";
-import { FiUser, FiPackage, FiLogOut, FiSettings, FiShoppingCart, FiSearch, FiClock, FiMail } from "react-icons/fi";
+import { FiUser, FiPackage, FiLogOut, FiSettings, FiShoppingCart, FiSearch, FiClock, FiMail, FiMapPin } from "react-icons/fi";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -11,6 +11,7 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const [searchHistory, setSearchHistory] = useState([]);
+  const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,6 +25,13 @@ export default function ProfilePage() {
             setOrders(data.orders || []);
             setCartItems(data.cartItems || []);
             setSearchHistory(data.searchHistory || []);
+            
+            // Also fetch addresses separately if needed, or if they are in the profile data
+            const addrRes = await fetch("/api/user/addresses");
+            const addrData = await addrRes.json();
+            if (addrRes.ok) {
+              setAddresses(addrData.addresses || []);
+            }
           }
         } catch (error) {
           console.error("Error fetching profile data", error);
@@ -167,6 +175,35 @@ export default function ProfilePage() {
                   >
                     <FiClock size={12} /> {search.query}
                   </Link>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Saved Addresses Section */}
+          <section className="dashboard-section">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+              <FiMapPin size={24} />
+              <h2 style={{ fontSize: '1.25rem', letterSpacing: '2px' }}>SAVED ADDRESSES</h2>
+            </div>
+            {addresses.length === 0 ? (
+              <div className="dashboard-empty">
+                <p>No addresses saved yet.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {addresses.map((addr: any) => (
+                  <div key={addr.id} style={{ padding: '1.25rem', border: '1px solid var(--border)', position: 'relative' }}>
+                    {addr.isDefault && (
+                      <span style={{ position: 'absolute', top: '1rem', right: '1rem', fontSize: '0.65rem', background: 'var(--foreground)', color: 'white', padding: '0.2rem 0.5rem', fontWeight: '700' }}>DEFAULT</span>
+                    )}
+                    <p style={{ fontWeight: '600', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{addr.name}</p>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--muted)', lineHeight: '1.4' }}>
+                      {addr.street}<br />
+                      {addr.city}, {addr.state} - {addr.pinCode}<br />
+                      Phone: {addr.phone}
+                    </p>
+                  </div>
                 ))}
               </div>
             )}
