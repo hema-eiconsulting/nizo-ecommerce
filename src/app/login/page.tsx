@@ -33,6 +33,7 @@ function LoginContent() {
 
       if (result?.error) {
         setError(result.error);
+        setPassword("");
         setLoading(false);
       } else if (result?.ok) {
         router.push(callbackUrl);
@@ -40,6 +41,7 @@ function LoginContent() {
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
+      setPassword("");
       setLoading(false);
     }
   };
@@ -110,6 +112,7 @@ function LoginContent() {
           <div style={{ textAlign: 'right', marginBottom: '1rem', position: 'relative', zIndex: 10 }}>
             <Link 
               href="/forgot-password" 
+              onClick={() => setPassword("")}
               style={{ fontSize: '0.85rem', color: 'var(--muted)', textDecoration: 'underline', padding: '0.5rem 0', display: 'inline-block' }}
             >
               Forgot Password?
