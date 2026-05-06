@@ -56,7 +56,7 @@ function LoginContent() {
       <div className="auth-card">
         <div className="auth-header">
           <Link href="/">
-            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '120px', width: 'auto', marginBottom: '1rem' }} />
+            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '70px', width: 'auto', marginBottom: '0.5rem' }} />
           </Link>
           <h1>WELCOME BACK</h1>
           <p>Login to your account to continue shopping</p>

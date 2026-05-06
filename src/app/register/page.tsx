@@ -63,7 +63,7 @@ export default function RegisterPage() {
       <div className="auth-card">
         <div className="auth-header">
           <Link href="/">
-            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '120px', width: 'auto', marginBottom: '1rem' }} />
+            <img src="/logo-nizo.png" alt="NIZO Logo" style={{ height: '70px', width: 'auto', marginBottom: '0.5rem' }} />
           </Link>
           <h1>CREATE ACCOUNT</h1>
           <p>Join NIZO and start your shopping journey</p>
