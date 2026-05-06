@@ -50,7 +50,7 @@ export async function POST(req: Request) {
           paymentMethod: paymentMethod === "COD" ? "COD" : "UPI", 
           paymentStatus: "PENDING",
           razorpayOrderId: razorpayOrder?.id,
-          shippingAddress: `${address.street}, ${address.city}, ${address.state} - ${address.pinCode}`,
+          shippingAddress: `${address.name} | ${address.phone} | ${address.street}, ${address.city}, ${address.state} - ${address.pinCode}`,
           items: {
             create: items.map((item: any) => ({
               productId: item.productId,
