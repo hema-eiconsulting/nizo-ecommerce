@@ -89,19 +89,12 @@ function LoginContent() {
           <div className="form-group">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
               <label className="label" style={{ marginBottom: 0 }}>Password</label>
-              <button 
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPassword("");
-                  setTimeout(() => {
-                    router.push("/forgot-password");
-                  }, 50);
-                }}
-                style={{ fontSize: '0.75rem', color: 'var(--muted)', textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer', outline: 'none' }}
+              <Link 
+                href="/forgot-password" 
+                style={{ fontSize: '0.75rem', color: 'var(--muted)', textDecoration: 'underline', position: 'relative', zIndex: 10 }}
               >
                 Forgot Password?
-              </button>
+              </Link>
             </div>
             <div style={{ position: 'relative' }}>
               <FiLock style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
